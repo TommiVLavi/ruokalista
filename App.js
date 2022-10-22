@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { Alert, Button, FlatList, Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, FlatList, Keyboard, StyleSheet, Text, TextInput, View } from 'react-native';
 import { AsyncStorage } from '@react-native-async-storage/async-storage'
 import * as SQLite from 'expo-sqlite'
 import { useEffect, useState } from 'react';
+import { Header, Input, Icon, Button, ListItem } from 'react-native-elements';
 
 export default function App() {
 
@@ -53,45 +54,91 @@ export default function App() {
     )
   }
 
+  const renderItem = ({ item }) => (
+            <ListItem bottomDivider>
+              <ListItem.Content>
+                <ListItem.Title>{item.food}</ListItem.Title>
+                <ListItem.Subtitle>{item.amount}</ListItem.Subtitle>
+
+                <View>
+                <Icon 
+                  onPress={(() => deleteIt(item.id))}
+                  name='remove'
+                  size={35}
+                  color='blue'
+                  />
+                </View>
+                
+                
+                
+              </ListItem.Content>
+            </ListItem>
+          )
+
   return (
     <View style={styles.container}>
-
-      <View>
-        <TextInput
-          style={styles.input}
+      <Header
+        centerComponent={{ text: 'Ostoslista', style: { color: 'white', 
+          fontSize: 20, margin: 20, fontWeight: 'bold' } }}
+      />
+      
+        <Input
+          label='TUOTE'
           placeholder='Tuote'
           onChangeText={text => setFood(text)}
           value={food}
+          fontSize={20}
+
+          leftIcon={
+            <Icon
+              name='add'
+              size={25}
+              color='blue'
+            />
+          }
         />
 
-        <TextInput
-          style={styles.input}
+        <Input
+          label='MAARA'
           placeholder='Maara'
           onChangeText={text => setAmount(text)}
           value={amount}
-        />
-      </View>
+          fontSize={15}
 
-      <View style={styles.button}>
-        <Button
-          title='Tallenna'
-          onPress={saveIt}
-        />
-      </View>
-
-      <View style={styles.table}>
-        <FlatList
-          ListHeaderComponent={() => <Text style={{fontSize: 20, fontWeight: "bold"}}>Lista</Text>}
-          keyExtractor={(item) => String(item.id)}
-          data={list}
-          renderItem={({ item }) =>
-            <View style={styles.row}>
-              <Text>{`${item.food} ${item.amount}`}</Text>
-              <Text style={styles.link} onPress={(() => deleteIt(item.id))}>Saatu</Text>
-            </View> 
+          leftIcon={
+            <Icon
+              name='add'
+              size={20}
+              color='blue'
+            />
           }
         />
-      </View>
+      
+
+      
+        <Button
+          buttonStyle={{ width: 130, margin: 15 }}
+          title='Tallenna'
+          onPress={saveIt}
+          
+          icon={
+            <Icon
+              name='save'
+              size={30}
+              color='blue'
+            />
+          }
+        />
+      
+
+      
+        <FlatList
+          ListHeaderComponent={() => <Text style={styles.table}>Lista</Text>}
+          keyExtractor={(item, index) => index.toString()}
+          data={list}
+          renderItem={renderItem}
+        />
+      
 
       <StatusBar style="auto" />
     </View>
@@ -103,7 +150,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   input: {
     width: 300,
@@ -114,18 +160,14 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   table: {
-    width: '70%',
-    alignItems: 'center',
-    margin: 40,
+    fontSize: 30, 
+    fontWeight: "bold", 
+    width:400,
   },
   row: {
-    margin: 10,
-  },
-  link: {
-    color: 'blue',
-    fontWeight: 'bold'
+    alignItems: 'center'
   },
   button: {
     margin: 5,
-  }
+  },
 });
